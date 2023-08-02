@@ -19,7 +19,7 @@ namespace NewsAPI.Services
 
         public async Task<bool> Create(Announcement announcement)
         {
-            if (announcement.Id == Guid.Empty)
+            if (announcement.Id == Guid.Empty || announcement.Id == null)
             {
                 announcement.Id = Guid.NewGuid();
             }
@@ -42,9 +42,10 @@ namespace NewsAPI.Services
 
         public async Task<Announcement> Get(Guid id)
         {
-            return (await _announcements.FindAsync(announcement => announcement.Id == id)).FirstOrDefault();
+            var result = await _announcements.FindAsync(announcement => announcement.Id == id);
+            var res2 = result.ToList().FirstOrDefault();
+            return res2;
         }
-
 
         public async Task<List<Announcement>> GetAll()
         {
@@ -72,7 +73,7 @@ namespace NewsAPI.Services
 
         public async Task<bool> Update(Guid id, AnnouncementNoId announcement)
         {
-            var result = await _announcements.UpdateOneAsync(announcement => announcement.Id == id, Builders<Announcement>.Update.Set("Title", announcement.Title).Set("Message", announcement.Message));
+            var result = await _announcements.UpdateOneAsync(announcement => announcement.Id == id, Builders<Announcement>.Update.Set("Title", announcement.Title).Set("CategoryId", announcement.CategoryId).Set("Message", announcement.Message).Set("Author", announcement.Author));
             if (!result.IsAcknowledged && result.ModifiedCount == 0)
             {
                 return false;

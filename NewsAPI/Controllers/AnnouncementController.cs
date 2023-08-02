@@ -31,6 +31,29 @@ namespace NewsAPI.Controllers
             return Ok(announcements);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAnnouncementById([FromRoute] Guid id)
+        {
+            if (id == null)
+            {
+                return BadRequest("Id is null.");
+            }
+
+            //search for the announcement in the existing list
+            //if found, return the announcement
+            //if not found, return NotFound
+
+            var announcement = await _announcementCollectionService.Get(id);
+            if (announcement != null)
+            {
+                return Ok(announcement);
+            }
+            else
+            {
+                return NotFound("Announcement not found");
+            }
+        }
+
         /// <summary>
         /// This is a sample POST method.
         /// </summary>
@@ -39,7 +62,6 @@ namespace NewsAPI.Controllers
         [HttpPost(Name = "CreateAnnouncement")]
         public async Task<IActionResult> CreateAnnouncement([FromBody] Announcement announcement)
         {
-            
             if (announcement == null)
             {
                 return BadRequest("Announcement is null.");
@@ -93,7 +115,7 @@ namespace NewsAPI.Controllers
         /// </summary>
         /// <returns></returns>
 
-        [HttpDelete(Name = "DeleteAnnouncement")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAnnouncement([FromRoute] Guid id)
         {
             if (id == null)
@@ -118,7 +140,7 @@ namespace NewsAPI.Controllers
                 return NotFound("Announcement not found");
             }
 
-            return Ok("Announcement deleted");
+            return Ok();
         }
 
         /// <summary>
